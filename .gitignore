@@ -1,0 +1,8 @@
+.idea/
+api/__pycache__/
+api/migrations/
+filepush/__pycache__/
+media/pliki/
+view/__pycache__/
+db.sqlite3
+view/migrations/
