@@ -10,6 +10,7 @@ Dropzone.autoDisover = false;
     uploadMultiple: true,
     success: function(file, response){
 //        console.log(response);
+
       window.location.href = response.link
 
       }

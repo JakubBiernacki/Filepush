@@ -5,7 +5,7 @@ from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import FileSerializer, ShareDirSerializer
-from .models import Sharedir, File
+from .models import Sharedir, File, DownloadData
 from rest_framework.decorators import action
 
 
@@ -46,3 +46,21 @@ class ShareDirViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
         serializer = FileSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StatisticsViewSet(viewsets.ViewSet):
+    def list(self, request):
+        files_count = File.objects.all().count()
+        download_count = DownloadData.objects.all().count()
+
+        return Response({'files_count': files_count, 'download_count': download_count}, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        user = request.user
+        ip = request.META['REMOTE_ADDR']
+        agent = request.META['HTTP_USER_AGENT']
+        file = request.data.get('filename')
+
+        DownloadData.objects.create(user=user, ip_address=ip, user_agent=agent, file=file)
+
+        return Response(status=status.HTTP_201_CREATED)
