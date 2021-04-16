@@ -6,7 +6,9 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('logout/', LogoutuserView.as_view(), name='logout'),
     path('dashboard/',DashboardView.as_view(), name='dashboard'),
-    path('dashboard/adddir/',AdddirView.as_view(), name='adddir'),
+    path('dashboard/adddir/', AdddirView.as_view(), name='adddir'),
+
+    path('sharedir/<str:code>/', ShareDirView.as_view(), name='dir')
 
     # path('', include('allauth.urls')),
 

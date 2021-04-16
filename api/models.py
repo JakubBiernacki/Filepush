@@ -22,9 +22,7 @@ class Sharedir(models.Model):
     code = models.CharField(max_length=6, unique=True, default=generate_code)
     creared_at = models.DateTimeField(auto_now_add=True)
 
-    @property
-    def delete_at(self):
-        return self.creared_at + datetime.timedelta(days=2)
+
 
     @property
     def file_count(self):
@@ -44,6 +42,16 @@ class Sharedir(models.Model):
 class File(models.Model):
     file = models.FileField(upload_to='pliki/%Y-%m-%d', blank=False)
     dir = models.ForeignKey(Sharedir, on_delete=models.CASCADE)
+
+    @property
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+    @property
+    def filesize(self):
+
+        size = self.file.size
+        return round(size / 1048576, 2)
 
 
 def delete_file(sender, instance, **kwargs):

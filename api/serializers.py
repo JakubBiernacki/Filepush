@@ -9,6 +9,9 @@ class FileSerializer(serializers.ModelSerializer):
 
 
 class ShareDirSerializer(serializers.ModelSerializer):
+
+    link = serializers.HyperlinkedIdentityField(view_name='dir', lookup_field='code', read_only=True)
     class Meta:
         model = Sharedir
-        fields = '__all__'
+        fields = ('id', 'code', 'link')
+
