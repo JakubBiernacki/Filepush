@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import FileSerializer, ShareDirSerializer
 from .models import Sharedir, File, DownloadData
 from rest_framework.decorators import action
+from .mypermissions import IsOwnerOrReadOnly
 
 
 # Create your views here.
@@ -35,13 +36,17 @@ class FileViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class ShareDirViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+class ShareDirViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
     queryset = Sharedir.objects.all()
     serializer_class = ShareDirSerializer
     lookup_field = 'code'
+    permission_classes = [IsOwnerOrReadOnly]
+
+
 
     @action(detail=True, methods=['get'])
     def files(self, request, code=None):
+        
         queryset = get_object_or_404(Sharedir, code=code).file_set.all()
 
         serializer = FileSerializer(queryset, many=True)

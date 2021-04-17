@@ -31,3 +31,13 @@
     height: 80px;
     background-color: #F8F8F8;
 }
+
+.x_circle{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+.x_circle:hover{
+    color:red;
+    cursor: pointer;
+}

@@ -2,8 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth.views import LogoutView, LoginView
-from django.urls import reverse
-from django.views.generic import TemplateView, ListView, DetailView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import TemplateView, ListView, DetailView, DeleteView
 
 from api.models import Sharedir
 
@@ -11,10 +11,6 @@ from api.models import Sharedir
 class HomeView(LoginView):
     template_name = 'view/home.html'
     # redirect_authenticated_user = True
-
-
-class LogoutuserView(LogoutView):
-    pass
 
 
 class DashboardView(LoginRequiredMixin, ListView):
@@ -41,6 +37,8 @@ class ShareDirView(DetailView):
 
     def get_object(self, queryset=None):
         code = self.kwargs['code']
-        self.dir = get_object_or_404(Sharedir.objects.prefetch_related('file_set').select_related(
+        sharedir = get_object_or_404(Sharedir.objects.prefetch_related('file_set').select_related(
             'user'), code=code)
-        return self.dir
+        return sharedir
+
+
