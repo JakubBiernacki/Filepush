@@ -1,10 +1,8 @@
-import datetime
-
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.crypto import get_random_string
-
-from django.db.models.signals import post_delete
+from django.dispatch import receiver
+from django.db.models.signals import post_delete, post_save
 import os
 
 
@@ -20,7 +18,10 @@ def generate_code():
 class Sharedir(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6, unique=True, default=generate_code)
-    creared_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Dir_{self.code}_{self.user}"
 
     @property
     def file_count(self):
@@ -54,14 +55,12 @@ class File(models.Model):
         return round(size / 1048576, 2)
 
 
+@receiver(post_delete, sender=File)
 def delete_file(sender, instance, **kwargs):
     try:
         os.remove(instance.file.path)
     except FileNotFoundError:
         pass
-
-
-post_delete.connect(delete_file, sender=File)
 
 
 class DownloadData(models.Model):
@@ -71,3 +70,30 @@ class DownloadData(models.Model):
     file = models.CharField(max_length=255)
     date = models.DateTimeField(auto_now_add=True)
 
+
+# User additional method
+@property
+def folders_count(self):
+    return self.sharedir_set.count()
+
+
+@property
+def all_file_size(self):
+    dirs = self.sharedir_set.prefetch_related('file_set')
+    size = 0
+    for dir in dirs:
+        size += dir.size
+    return size
+
+
+User.add_to_class('folders_count', folders_count)
+User.add_to_class('all_file_size', all_file_size)
+
+
+@receiver(post_save, sender=User)
+def add_new_user_to_group(sender, instance, created, **kwargs):
+    if created:
+        # instance.is_active = False
+        group = Group.objects.get(id=1)
+        instance.groups.add(group)
+        instance.save()

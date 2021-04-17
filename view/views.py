@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth.views import LogoutView, LoginView
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, ListView, DetailView, DeleteView
+from django.views.generic import TemplateView, ListView, DetailView, DeleteView, RedirectView
 
 from api.models import Sharedir
 
@@ -20,7 +20,7 @@ class DashboardView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = Sharedir.objects.all().prefetch_related('file_set').select_related(
-            'user').filter(user=user).order_by("-creared_at")
+            'user').filter(user=user).order_by("-created_at")
 
         return queryset
 

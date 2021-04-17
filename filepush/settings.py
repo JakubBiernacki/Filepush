@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     #auth
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
+    # 'allauth.socialaccount',
     'dj_rest_auth',
     #tool
     'debug_toolbar',
@@ -157,7 +157,7 @@ USE_TZ = True
 
 
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = 'dashboard/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)

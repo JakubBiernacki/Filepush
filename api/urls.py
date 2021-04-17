@@ -8,6 +8,6 @@ router.register('sharedir', ShareDirViewSet, basename='sharedir')
 router.register('statistics', StatisticsViewSet, basename='stat')
 
 urlpatterns = [
-    path('dj-rest-auth/', include('dj_rest_auth.urls')),
+    path('rest-auth/', include('dj_rest_auth.urls')),
     path('', include(router.urls)),
 ]

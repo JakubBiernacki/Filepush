@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from rest_framework import status, viewsets, mixins
@@ -20,16 +19,33 @@ class FileViewSet(viewsets.ViewSet):
     def create(self, request):
 
         if files := request.FILES:
+            user = request.user
 
-            dir = Sharedir.objects.create(user=request.user)
+            dir = Sharedir(user=user)
             print(files)
 
             to_create = []
+            size = 0
             for f in files.values():
                 p = File(dir=dir, file=f)
-
+                size += f.size
                 to_create.append(p)
 
+            size = round(size / 1048576, 2)
+
+            grupa = user.groups.values_list('name', flat=True)[0]
+
+            if grupa == 'standard':
+                if user.all_file_size + size > 10:
+                    return Response({f"Brak miejsca - user w grupie \"{grupa}\" może "
+                                     "udostępniać pliki do 10MB"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            elif grupa == 'premium':
+                if user.all_file_size + size > 40:
+                    return Response({f"Brak miejsca - user w grupie \"{grupa}\" może "
+                                     "udostępniać pliki do 40MB"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            dir.save()
             File.objects.bulk_create(to_create)
 
             return Response({'link': reverse('dashboard')}, status=status.HTTP_200_OK)
@@ -42,11 +58,8 @@ class ShareDirViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
     lookup_field = 'code'
     permission_classes = [IsOwnerOrReadOnly]
 
-
-
     @action(detail=True, methods=['get'])
     def files(self, request, code=None):
-        
         queryset = get_object_or_404(Sharedir, code=code).file_set.all()
 
         serializer = FileSerializer(queryset, many=True)
