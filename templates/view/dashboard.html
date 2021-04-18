@@ -23,22 +23,15 @@
 
     {%for dir in object_list%}
 
-
-
       <div class="p-4 lg:w-1/2">
 
-
-
         <div  class="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left">
-
-
 
           <a href="{%url 'dir' dir.code%}">
           <img alt="team" class="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 mb-4" src="/media/dir.jpg">
           </a>
 
           <div style='position: relative;' class="flex-grow sm:pl-8">
-
 
             <div class="x_circle" data-code="{{dir.code}}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
@@ -47,11 +40,11 @@
             </div>
 
             <h2 class="title-font font-medium text-lg text-gray-900">CODE: {{dir.code}}</h2>
-            <h3 class="text-gray-500 mb-3">{{dir.user}}</h3>
+            <h3 class="text-gray-500 mb-3">{{request.user}}</h3>
             <!-- <p class="mb-4">DIY tote bag drinking vinegar cronut adaptogen squid fanny pack vaporware.</p> -->
             <span class="">
               <h4 class="text-gray-500">
-                utworzone: {{dir.creared_at|date:'d M y G:i'}}
+                utworzone: {{dir.created_at|date:'d M y G:i'}}
               </h4>
               <h4 class="text-gray-500">
                 rozmiar: {{dir.size}} MB

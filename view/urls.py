@@ -9,7 +9,7 @@ urlpatterns = [
     path('', HomeView.as_view(), name='account_login'),  # login
     path('', HomeView.as_view(), name='home'),  # login
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/', dashboard, name='dashboard'),
     path('dashboard/adddir/', AdddirView.as_view(), name='adddir'),
 
     path('sharedir/<str:code>/', ShareDirView.as_view(), name='dir'),

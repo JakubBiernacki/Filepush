@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.views import LogoutView, LoginView
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, ListView, DetailView, DeleteView, RedirectView
-
+from django.db.models import Sum, Count
 from api.models import Sharedir
 
 
@@ -13,16 +13,35 @@ class HomeView(LoginView):
     # redirect_authenticated_user = True
 
 
-class DashboardView(LoginRequiredMixin, ListView):
-    model = Sharedir
-    template_name = 'view/dashboard.html'
+# class DashboardView(LoginRequiredMixin, ListView):
+#     model = Sharedir
+#     template_name = 'view/dashboard.html'
+#
+#     def get_queryset(self):
+#         user = self.request.user
+#         queryset = Sharedir.objects.all().select_related(
+#             'user').filter(user=user).order_by("-created_at")
+#
+#         return queryset
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(DashboardView, self).get_context_data(**kwargs)
+#         context['size'] = sum([x.size for x in self.get_queryset()])
+#         return context
 
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Sharedir.objects.all().prefetch_related('file_set').select_related(
-            'user').filter(user=user).order_by("-created_at")
+def dashboard(request):
+    user = request.user
 
-        return queryset
+    queryset = Sharedir.objects.defer('user').annotate(file_count=Count('file')).filter(user=user).order_by("-created_at")
+
+    size = sum([x.size for x in queryset])
+
+    context = {
+        'object_list': queryset,
+        'size': size
+    }
+
+    return render(request, 'view/dashboard.html', context)
 
 
 class AdddirView(LoginRequiredMixin, TemplateView):
@@ -40,5 +59,3 @@ class ShareDirView(DetailView):
         sharedir = get_object_or_404(Sharedir.objects.prefetch_related('file_set').select_related(
             'user'), code=code)
         return sharedir
-
-

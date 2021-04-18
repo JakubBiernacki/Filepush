@@ -7,10 +7,13 @@ from .models import Sharedir, File
 
 @admin.register(Sharedir)
 class SharedirAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'code', 'created_at', 'size', 'file_count']
+    list_display = ['id', 'user', 'code', 'created_at', 'size', 'count']
 
     def size(self, obj):
         return f"{obj.size} MB"
+
+    def count(self, obj):
+        return obj.file_set.count()
     # list_filter = ['obrazek']
     # search_fields = ['tresc']
 

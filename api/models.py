@@ -4,7 +4,8 @@ from django.utils.crypto import get_random_string
 from django.dispatch import receiver
 from django.db.models.signals import post_delete, post_save
 import os
-
+from django.db.models import Sum
+from django.core.validators import MinValueValidator
 
 def generate_code():
     while True:
@@ -19,23 +20,12 @@ class Sharedir(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6, unique=True, default=generate_code)
     created_at = models.DateTimeField(auto_now_add=True)
+    size = models.FloatField(default=0, validators=[MinValueValidator(0.0)])
 
     def __str__(self):
         return f"Dir_{self.code}_{self.user}"
 
-    @property
-    def file_count(self):
-        return self.file_set.count()
 
-    @property
-    def size(self):
-        files = self.file_set.all()
-
-        size = 0
-        for f in files:
-            size += f.file.size
-
-        return round(size / 1048576, 2)
 
 
 class File(models.Model):

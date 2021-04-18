@@ -36,7 +36,7 @@
           </svg>
         </div>
         <div class="flex-grow">
-          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Utworzone: {{object.creared_at|date:'d M y G:i'}}</h2>
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Utworzone: {{object.created_at|date:'d M y G:i'}}</h2>
 
         </div>
       </div>
@@ -48,7 +48,7 @@
           </svg>
         </div>
         <div class="flex-grow">
-          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Rozmiar: {{object.size}}MB <br> Pliki: {{object.file_count}}</h2>
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3">Rozmiar: {{object.size}}MB <br> Pliki: {{object.file_set.count}}</h2>
 
         </div>
       </div>

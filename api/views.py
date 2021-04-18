@@ -45,6 +45,7 @@ class FileViewSet(viewsets.ViewSet):
                     return Response({f"Brak miejsca - user w grupie \"{grupa}\" może "
                                      "udostępniać pliki do 40MB"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+            dir.size = size
             dir.save()
             File.objects.bulk_create(to_create)
 
@@ -68,8 +69,8 @@ class ShareDirViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
 
 class StatisticsViewSet(viewsets.ViewSet):
     def list(self, request):
-        files_count = File.objects.all().count()
-        download_count = DownloadData.objects.all().count()
+        files_count = File.objects.count()
+        download_count = DownloadData.objects.count()
 
         return Response({'files_count': files_count, 'download_count': download_count}, status=status.HTTP_200_OK)
 
